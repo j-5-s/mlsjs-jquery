@@ -271,11 +271,10 @@
 				parameters  = options.parameters,
 				fn   = options.success;
 
-			console.log('tst')	
 			this.queryProperties({
 				parameters: parameters,
 				success: function( properties ) {
-					console.log(properties)
+			
 					self.mlsjs.renderPropertiesTemplate( properties, parameters );
 					fn.call( self.options.el, properties );
 				}
@@ -301,7 +300,7 @@
 				parameters.hash = parameters.hash || 'show';
 			
 			this.queryProperties({
-				parameters: parameters,
+				parameters: parameters.query,
 				success: function( properties ) {
 					
 					self.mlsjs.renderListTemplate( properties, parameters );
@@ -420,6 +419,8 @@
 		this.renderListTemplate = function( properties, parameters ) {
 			
 			var template = parameters.template || 'search_results';
+
+		
 			
 			this.options.el.html( this.getTemplate( template, { properties:properties,parameters:parameters } ) );
 			return this;
@@ -463,14 +464,12 @@
 
 		this.getTemplate = function( template_name, p ) {
 			var html = '';
+			console.log(template_name)
 
-
-			if (typeof this.options.template !== 'undefined') {
-				html = this.options.template.html();
+			if (typeof template_name === 'object') {
+				html = template_name.html();
 			} else {
-
 				html = this.default_templates[template_name];
-		
 				//@TODO create html template
 			}
 
