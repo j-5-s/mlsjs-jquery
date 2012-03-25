@@ -197,6 +197,11 @@
 		/**
 		* Gets all the individual search fields available
 		* @function
+		* @param Options
+		*     - location {Object}
+		*       - latitude
+		*       - longitude
+		*       - radius
 		* @returns {Array} search_fields
 		*/
 
@@ -237,8 +242,6 @@
 					fn.call( self.options.el, fields );
 			});
 		};
-
-
 
 
 		/**
