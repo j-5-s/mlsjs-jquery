@@ -261,7 +261,7 @@
 
 
 			this.mlsjs.queryProperties( parameters, function( properties, parameters ){
-			
+				
 				fn.call( self.options.el, properties );
 			});
 		};	
@@ -284,15 +284,17 @@
 				template        = options.template || 'properties',
 				locals          = {};
 
+
 			locals.hash = locals.hash || 'show';
 			locals.property_page = locals.property_page || '/property';
-
-			this.queryProperties({
-				parameters: parameters,
-				success: function( properties ) {
-					self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, {properties:properties, locals:locals} ) );
+			
+			this.mlsjs.queryProperties( parameters, function( properties ) {
+					
+				self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, {properties:properties, locals:locals} ) );
+				
+				if (typeof fn !== 'undefined')	
 					fn.call( self.options.el, properties );
-				}
+				
 			});	
 			return this;
 		};
