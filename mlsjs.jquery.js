@@ -225,9 +225,11 @@
 				self = this;
 
 
+
 			this.mlsjs.getSearchFields( options, function( fields ){
 				options.fields = fields;
 				var template = options.template || 'search_form';
+				console.log('f',fields)
 				self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, options ) );
 			
 				if (fn)
@@ -249,9 +251,9 @@
 		*/
 
 		this.queryProperties = function( options ) {
-			var self = this,
-				parameters  = options.parameters,
-				fn   = options.success;
+			var self        = this,
+				parameters  = options.query,
+				fn          = options.success;
 
 
 			this.mlsjs.queryProperties( parameters, function( properties, parameters ){
@@ -264,24 +266,27 @@
 		* Query the properties and render them to the jQuery el
 		* @function
 		* @param {Object} options
-		*      - parameters: query_parameters
+		*      - query {Object}
+		*      - template {Mixed} 
+		*      - property_page {String}
 		*      - success: callback(properties)
 		* @returns {jQuery} 
 		*/
 
 		this.queryAndRenderProperties = function( options ) {
 			var self            = this,
-				parameters      = options.parameters,
+				parameters      = options.query,
 				fn              = options.success,
-				template        = (parameters.template || 'properties');
+				template        = options.template || 'properties',
+				locals          = {};
 
-			parameters.hash = parameters.hash || 'show';
+			locals.hash = locals.hash || 'show';
+			locals.property_page = locals.property_page || '/property';
 
 			this.queryProperties({
 				parameters: parameters,
 				success: function( properties ) {
-
-					self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, {properties:properties, parameters:options.parameters} ) );
+					self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, {properties:properties, locals:locals} ) );
 					fn.call( self.options.el, properties );
 				}
 			});	
@@ -345,7 +350,7 @@
 		* 
 		*/
 		this.getSearchFields = function( options, fn ) {
-			var parameters  = options.parameters;
+			var parameters  = options.location;
 
 			$.getJSON( this.url + '/fields/all' + '?callback=?', parameters, function( data ){
 				fn.call( null, data );
@@ -378,7 +383,7 @@
 			'thumbnails' : '<ul class="MLSjs-list">'+
 					'<% for ( var i = 0; i < properties.length; i++) { %>' +
 					'<% if (properties[i].images.length > 0) { %>'+
-						'<li><a href="<%= parameters.property_page %>#<%= parameters.hash %>/<%= properties[i]._id %>"><img src="https://s3.amazonaws.com/mlsjs/uploads/<%= properties[i].images[0].filename %>" /></a></li>'+
+						'<li><a href="<%= locals.property_page %>#<%= locals.hash %>/<%= properties[i]._id %>"><img src="https://s3.amazonaws.com/mlsjs/uploads/<%= properties[i].images[0].filename %>" /></a></li>'+
 					'<% } %>'+
 					'<% } %></ul>',
 			'search_form': '<b>Search</b>',
