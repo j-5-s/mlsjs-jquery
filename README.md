@@ -50,7 +50,7 @@ $('body').MLSjs({
 
 ```HTML
 <script type="text/template" id="property_template">
-	<p><%= property.address %>
+	<p><%= property.address %></p>
 </script>
 ```
 
