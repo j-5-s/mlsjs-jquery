@@ -151,7 +151,7 @@ Gets all the search fields and renders a search form
 $('body').MLSjs({
 	account_id:1001,
 },'renderSearchForm',{
-	parameters: {
+	location: {
 		latitude: 33.73974000503961,
 		longitude: -84.35771976249998,
 		radius: 30
@@ -178,11 +178,9 @@ Gets a list of properties and their data from query parameters.
 	$("body").MLSjs({
 		account_id: '1001',
 	},'queryProperties', {
-		parameters: {
-			query: {
+		query: {
 				limit:5,
 				image_type: 'horizontal'
-			}
 		},
 		success: function(properties) {
 			console.log(this,properties)
@@ -212,13 +210,13 @@ several options for a default template, or you may use your own template
 $("body").MLSjs({
 	account_id: '1001',
 },'queryAndRenderProperties', {
-	parameters: {
-		query: {
+	query: {
 			limit:5,
 			image_type: 'horizontal'
-		},
-		template: 'thumbnails',
-		property_page: '/frontend_dev.php/property'
+	},
+	template: 'thumbnails',
+	locals: {
+		property_page: '/frontend_dev.php/property'	
 	},
 	success: function(properties) {
 		console.log(this)
@@ -229,11 +227,11 @@ $("body").MLSjs({
 $("body").MLSjs({
 	account_id: '1001',
 },'queryAndRenderProperties', {
-	parameters: {
-		query: {
-			limit:10,
-		},
-		template: 'properties',
+	query: {
+		limit:10,
+	},
+	template: 'properties',
+	locals: {
 		property_page: '/property'
 	},
 	success: function(properties) {
