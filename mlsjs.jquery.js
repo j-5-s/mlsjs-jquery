@@ -68,46 +68,6 @@
 		};
 
 		/**
-		* Fetches the property from an id and 
-		* renders the template
-		* @function
-		* @param {String} id
-		* @returns {this} MLSjs
-		*/
-
-		this.fetchAndRenderProperty = function( options ) {
-			var self = this,
-				fn = options.success,
-				id;
-
-			if (typeof options === 'string') {
-				id = options;
-			} else {
-				id = options.id;
-			}
-
-			//check that id is a hash
-			//Assume that if the last part of the hash
-			//is /\w+, then its the id
-			//@example
-			// #show/4e9795ebed5c8baf0200001e or
-			// #property/4e9795ebed5c8baf0200001e
-			if (/\/(\w+)$/.test(id)) {
-				id = /\/(\w+)$/.exec(id)[1];
-			}
-
-
-			this.fetchProperty( {
-				id: id,
-				success: function( p ) {
-					self.mlsjs.renderPropertyTemplate( p );
-					fn.call(self.options.el,p);
-				}	
-			});
-			return this;
-		};
-
-		/**
 		* Gets the property data from the server
 		* or cached stored in $.data
 		* @function
@@ -138,29 +98,45 @@
 				});
 			}
 		};		
-
+		
 
 		/**
-		* Fetches the properties from an array of ids and 
+		* Fetches the property from an id and 
 		* renders the template
 		* @function
-		* @param {Array} ids
-		* @returns {jQuery} this
+		* @param {String} id
+		* @param {Function} callback 
+		* @returns {this} MLSjs
 		*/
 
-		this.fetchAndRenderProperties = function( options ) {
+		this.fetchAndRenderProperty = function( options ) {
 			var self = this,
-				ids;
+				fn = options.success,
+				id;
+
 			if (typeof options === 'string') {
-				ids = [options];
+				id = options;
 			} else {
-				ids = options.ids;
+				id = options.id;
 			}
 
-			this.fetchProperties( {
-				ids: ids,
-				success: function( properties ) {
-					self.mlsjs.renderPropertiesTemplate( properties );
+			//check that id is a hash
+			//Assume that if the last part of the hash
+			//is /\w+, then its the id
+			//@example
+			// #show/4e9795ebed5c8baf0200001e or
+			// #property/4e9795ebed5c8baf0200001e
+			if (/\/(\w+)$/.test(id)) {
+				id = /\/(\w+)$/.exec(id)[1];
+			}
+
+
+			this.fetchProperty( {
+				id: id,
+				success: function( property ) {
+					var template = options.template || 'property';
+					self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, property ) );		
+					fn.call(self.options.el, property);
 				}	
 			});
 			return this;
@@ -181,7 +157,6 @@
 				ids  = options.ids,
 				fn   = options.success;
 
-
 			this.mlsjs.fetchProperties( ids, function( properties ){
 
 				fn.call( self.options.el, properties );
@@ -189,6 +164,33 @@
 
 			return this;
 		};
+
+		/**
+		* Fetches the properties from an array of ids and 
+		* renders the template
+		* @function
+		* @param {Array} ids
+		* @returns {jQuery} this
+		*/
+
+		this.fetchAndRenderProperties = function( options ) {
+			var self = this,
+				ids  = options.ids,
+				fn   = options.fn;
+
+			this.fetchProperties( {
+				ids: ids,
+				success: function( properties ) {
+					var template = options.template || 'properties';
+					self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, properties ) );
+					if (typeof fn !== 'undefined')
+						fn.call( self.options.el, properties );
+				}	
+			});
+			return this;
+		};
+
+
 
 		/**
 		* Gets all the individual search fields available
@@ -199,8 +201,6 @@
 		this.getSearchFields = function( options ) {
 			var fn   = options.success,
 				self = this;
-
-				
 
 			this.mlsjs.getSearchFields( options, function( fields ){
 			
@@ -214,7 +214,8 @@
 		* Gets all the search fields and renders them in a form
 		* @function
 		* @param {Object} options
-		*      -    
+		*      - parameters
+		*      - success
 		* @returns {String} html
 		*/
 
@@ -223,12 +224,14 @@
 			var fn   = options.success,
 				self = this;
 
-				
 
 			this.mlsjs.getSearchFields( options, function( fields ){
-				self.mlsjs.renderSearchTemplate( fields );
+				options.fields = fields;
+				var template = options.template || 'search_form';
+				self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, options ) );
+			
 				if (fn)
-					fn.call( self.options.el );
+					fn.call( self.options.el, fields );
 			});
 		};
 
@@ -238,7 +241,7 @@
 		/**
 		* Gets a list of properties based on a query
 		* @param {Object} options
-		*      - query_params: {Object} basic mongodb query parameter format
+		*      - query: {Object} basic mongodb query parameter format
 		*      - success: {Function} callback(properties)
 		*
 		* @function
@@ -267,48 +270,24 @@
 		*/
 
 		this.queryAndRenderProperties = function( options ) {
-			var self = this,
-				parameters  = options.parameters,
-				fn   = options.success;
+			var self            = this,
+				parameters      = options.parameters,
+				fn              = options.success,
+				template        = (parameters.template || 'properties');
+
+			parameters.hash = parameters.hash || 'show';
 
 			this.queryProperties({
 				parameters: parameters,
 				success: function( properties ) {
-			
-					self.mlsjs.renderPropertiesTemplate( properties, parameters );
+
+					self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, {properties:properties, parameters:options.parameters} ) );
 					fn.call( self.options.el, properties );
 				}
 			});	
 			return this;
 		};
-
-		/**
-		* Query the properties and render them to the jQuery el
-		* @function
-		* @param {Object} options
-		*      - paramters: query_parameters
-		*      - success: callback(properties)
-		* @returns {jQuery} 
-		*/
-
-		this.queryAndRenderList = function( options ) {
-			var self        = this,
-				parameters  = options.parameters,
-				fn          = options.success;
-
-				//hash is optional
-				parameters.hash = parameters.hash || 'show';
-			
-			this.queryProperties({
-				parameters: parameters.query,
-				success: function( properties ) {
-					
-					self.mlsjs.renderListTemplate( properties, parameters );
-					fn.call( self.options.el, properties );
-				}
-			});	
-			return this;
-		};		
+	
 
 		return this;
 	}).call( MLSjs.prototype );	
@@ -388,54 +367,6 @@
 		};
 
 
-		/**
-		* Renders the Property Template (Single Property)
-		* @function
-		* @param {Object} property
-		*/
-
-		this.renderPropertyTemplate = function( p ) {
-			this.options.el.html( this.getTemplate( 'property', p ) );
-			return this;
-		};
-
-		/**
-		* Renders the Properties Template (Multiple Properties)
-		* @function
-		* @param {Object} property
-		*/
-
-		this.renderPropertiesTemplate = function( properties ) {
-			this.options.el.html( this.getTemplate( 'properties', {properties:properties} ) );
-			return this;
-		};
-
-		/**
-		* Renders the List Template (Multiple Properties)
-		* @function
-		* @param {Object} property
-		*/
-
-		this.renderListTemplate = function( properties, parameters ) {
-			
-			var template = parameters.template || 'search_results';
-
-		
-			
-			this.options.el.html( this.getTemplate( template, { properties:properties,parameters:parameters } ) );
-			return this;
-		};
-
-		/**
-		* Renders the search form
-		* @function
-		* @param {Object} fields
-		*/
-		this.renderSearchTemplate = function( fields ) {
-
-			this.options.el.html( this.getTemplate( 'search_form', { fields:fields } ) );
-			return this;			
-		};
 
 		/**
 		* Storage for templates
@@ -464,7 +395,7 @@
 
 		this.getTemplate = function( template_name, p ) {
 			var html = '';
-			console.log(template_name)
+		
 
 			if (typeof template_name === 'object') {
 				html = template_name.html();
