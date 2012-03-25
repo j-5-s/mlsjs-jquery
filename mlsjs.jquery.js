@@ -158,8 +158,8 @@
 				fn   = options.success;
 
 			this.mlsjs.fetchProperties( ids, function( properties ){
-
-				fn.call( self.options.el, properties );
+				if (typeof fn !== 'undefined')
+					fn.call( self.options.el, properties );
 			});
 
 			return this;
@@ -176,13 +176,15 @@
 		this.fetchAndRenderProperties = function( options ) {
 			var self = this,
 				ids  = options.ids,
-				fn   = options.fn;
+				fn   = options.success;
 
 			this.fetchProperties( {
 				ids: ids,
 				success: function( properties ) {
+
 					var template = options.template || 'properties';
-					self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, properties ) );
+					self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, {properties:properties} ) );
+				
 					if (typeof fn !== 'undefined')
 						fn.call( self.options.el, properties );
 				}	
@@ -228,8 +230,7 @@
 
 			this.mlsjs.getSearchFields( options, function( fields ){
 				options.fields = fields;
-				var template = options.template || 'search_form';
-				console.log('f',fields)
+				var template = options.template || 'search_form';		
 				self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, options ) );
 			
 				if (fn)
