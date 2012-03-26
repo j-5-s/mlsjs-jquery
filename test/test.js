@@ -1,4 +1,6 @@
-/*globals test,$,stop,start,equal,ok,deepEqual,expect*/
+/*globals test,$,stop,start,equal,ok,deepEqual,expect,module*/
+
+module("Default");
 test("fetchProperty( options )", function() {
 	stop();
 	expect(2);
@@ -102,7 +104,8 @@ test('renderSearchForm( options )',function(){
 	});
 });
 
-test('queryProperties( options )',function(){
+module("Queries");
+test('queryProperties( options ) / Default',function(){
 	stop();
 	expect(2);
 	$("#hidden_div").empty();
@@ -120,6 +123,29 @@ test('queryProperties( options )',function(){
 			equal(properties.length, 5, '5 properties returned');
 		}
 	});
+
+});
+
+test('queryProperties( options ) / Cities Query',function(){
+	stop();
+	expect(2);
+	$("#hidden_div").MLSjs({
+		account_id: '1001'
+	},'queryProperties', {
+		query: {
+			limit: 5,
+			city: 'marietta'
+		},
+		success: function(properties) {
+			start();
+			var cities = $(properties).map(function(i,property){
+				return property._city.name;
+			});
+			var city = $.unique(cities).get(0);
+			ok($.unique(cities).length,'Only 1 city returned');
+			equal(city,"marietta",'returned only properties in marietta');
+		}
+	});	
 });
 
 test('queryAndRenderProperties( options )',function(){
