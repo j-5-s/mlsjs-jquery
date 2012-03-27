@@ -282,7 +282,7 @@
 				parameters      = options.query,
 				fn              = options.success,
 				template        = options.template || 'properties',
-				locals          = {};
+				locals          = options.locals || {};
 
 
 			locals.hash = locals.hash || 'show';
