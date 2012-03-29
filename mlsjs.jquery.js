@@ -135,7 +135,7 @@
 				id: id,
 				success: function( property ) {
 					var template = options.template || 'property';
-					self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, property ) );		
+					self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, {property:property} ) );		
 					fn.call(self.options.el, property);
 				}	
 			});
@@ -389,7 +389,7 @@
 			'thumbnails' : '<ul class="MLSjs-list">'+
 					'<% for ( var i = 0; i < properties.length; i++) { %>' +
 					'<% if (properties[i].images.length > 0) { %>'+
-						'<li><a href="<%= locals.property_page %>#<%= locals.hash %>/<%= properties[i]._id %>"><img src="https://s3.amazonaws.com/mlsjs/uploads/<%= properties[i].images[0].filename %>" /></a></li>'+
+						'<li><a href="<%= locals.property_page %>#<%= locals.hash %>/<%= properties[i]._id %>"><img style="" src="https://s3.amazonaws.com/mlsjs/uploads/<%= properties[i].images[0].filename %>" /></a></li>'+
 					'<% } %>'+
 					'<% } %></ul>',
 			'search_form': '<b>Search</b>',
@@ -414,6 +414,7 @@
 				html = this.default_templates[template_name];
 				//@TODO create html template
 			}
+
 
 			return this.template(html, p);
 		};
