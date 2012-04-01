@@ -14,23 +14,24 @@ test("fetchProperty( options )", function() {
 			ok(property.images.length,'Property has images');			
 		}
 	});
-
-
-
 });
 
 test('fetchAndRenderProperty( options )',function(){
 	stop();
-	expect(2);
+	expect(3);
 	$("#hidden_div").MLSjs({
 		account_id: '1001'
 	},'fetchAndRenderProperty', {
 		id: '4f6bc3c0da13d7e40100014e',
-		success: function(property) {
+		success: function(property, chat_socket ) {
 
 			start();
 			equal(property._id, '4f6bc3c0da13d7e40100014e', 'Property id fetched is 4f6bc3c0da13d7e40100014e');
 			equal($($(this).children().get(0)).html(),'221 Robin Hood Rd NE','$(this) was rendered property data');
+
+			chat_socket.done(function(socket){
+				ok(typeof socket.socket !== 'undefined', 'Socket is defined');
+			});
 		}
 	});
 });

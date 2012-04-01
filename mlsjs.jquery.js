@@ -136,10 +136,12 @@
 				success: function( property ) {
 					var template = options.template || 'property';
 					self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, {property:property} ) );	
-
-					fn.call(self.options.el, property);
+					var dfd = $.Deferred();
+				
+					fn.call(self.options.el, property, dfd );
 					self.mlsjs.loadSocket(function(socket){
-						socket.emit("load_property",{property_id:[id],action:'open'});					
+						socket.emit("load_property",{property_id:[id],action:'open'});	
+						dfd.resolve(socket);				
 					});
 					//socketio stuff
 					
