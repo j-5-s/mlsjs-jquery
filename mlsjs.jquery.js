@@ -384,7 +384,7 @@
 		* @TODO place in separate file
 		*/
 		this.default_templates = {
-			'property'   : '<div><%= address %></div>',
+			'property'   : '<div><%= property.address %></div>',
 			'properties' : '<div><ul><% for ( var i = 0; i < properties.length; i++) { %><li><%= properties[i].address %></li><% } %></ul></div>',
 			'thumbnails' : '<ul class="MLSjs-list">'+
 					'<% for ( var i = 0; i < properties.length; i++) { %>' +
