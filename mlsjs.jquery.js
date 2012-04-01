@@ -13,7 +13,7 @@
 //	Remove the property and data
 //	$('body').MLSjs('destroy');
 
-/*globals jQuery */
+/*globals jQuery, io, document */
 (function( $ ){
 	'use strict';
 
@@ -135,8 +135,14 @@
 				id: id,
 				success: function( property ) {
 					var template = options.template || 'property';
-					self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, {property:property} ) );		
+					self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, {property:property} ) );	
+
 					fn.call(self.options.el, property);
+					self.mlsjs.loadSocket(function(socket){
+						socket.emit("load_property",{property_id:[id],action:'open'});					
+					});
+					//socketio stuff
+					
 				}	
 			});
 			return this;
@@ -313,6 +319,10 @@
 	var MLSjsUtility = function( options ) {
 		this.options = options;
 		this.url = 'http://api.localhost.james:3000';
+		this.socket_url = 'http://socket.localhost.james:3000';
+		this.socket_js = 'http://socket.localhost.james:3000/socket.io/socket.io.js';
+		this.socket = {};
+		this.socketLoaded = false;
 	};
 
 	/** @lends PrivateMLSjs */
@@ -361,6 +371,44 @@
 			$.getJSON( this.url + '/fields/all' + '?callback=?', parameters, function( data ){
 				fn.call( null, data );
 			});
+		};
+
+		/**
+		* Singleton function for loading socksets
+		* Loads the socket or returns the existing socket
+		* @function
+		* @param {Function} Callback function on load of socketio
+		*/
+		this.loadSocket = function ( fn ) {
+			var self = this;
+
+			if (this.socketLoaded) {
+				fn(self.socket);
+				return;
+			}
+
+			var sc = document.createElement('script'); 
+			sc.type = 'text/javascript'; sc.async = true;
+			sc.src = this.socket_js;
+
+			//load socket.io on complete
+			var complete = function() {
+				self.socket = io.connect(self.socket_url);
+				fn(self.socket);
+			};
+
+			sc.onreadystatechange= function () {
+				if (this.readyState == 'complete') complete();
+			};
+			sc.onload = complete;
+
+
+			//Insert before the first script element
+			var s = document.getElementsByTagName('script')[0];
+			s.parentNode.insertBefore(sc, s);
+			this.socketLoaded = true;
+
+
 		};
 
 		/**
