@@ -200,7 +200,20 @@
 			return this;
 		};
 
+		/**
+		* Gets the chat history on a property for an id
+		* @function
+		* @param Option
+		*     - property_id
+		**/
+		this.getChatHistory = function( options ) {
+			var fn   = options.success,
+				self = this;
 
+			self.mlsjs.getChatHistory( options, function( history ){
+				fn.call( self.options.el, history );
+			});
+		};
 
 		/**
 		* Gets all the individual search fields available
@@ -373,6 +386,20 @@
 			$.getJSON( this.url + '/fields/all' + '?callback=?', parameters, function( data ){
 				fn.call( null, data );
 			});
+		};
+		/**
+		* Gets all the chat history for a property
+		* @function
+		* @api private
+		*/
+		this.getChatHistory = function( options, fn ) {
+			var parameters = {
+				account_id:this.options.account_id
+			};
+			
+			$.getJSON( this.url + '/chat-history/' + options.property_id +  '?callback=?', parameters, function( data ){
+				fn.call( null, data );
+			});			
 		};
 
 		/**

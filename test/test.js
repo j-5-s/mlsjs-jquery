@@ -86,6 +86,21 @@ test('getSearchFields( options )',function(){
 	});
 });
 
+
+test('getChatHistory( options )',function(){
+	stop();
+	expect(1);
+	$("#hidden_div").MLSjs({
+		account_id: '1001'
+	},'getChatHistory', {
+		property_id: '4e9ac8e1a454386c01000283',
+		success: function(resp) {		
+			start();
+			ok(resp.chat_history.length > 40, 'Chats returned for property');
+		}
+	});
+});
+
 test('renderSearchForm( options )',function(){
 	stop();
 	expect(2);
