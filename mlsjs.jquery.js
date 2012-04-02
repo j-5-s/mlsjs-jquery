@@ -210,10 +210,19 @@
 			var fn   = options.success,
 				self = this;
 
-			self.mlsjs.getChatHistory( options, function( history ){
-				fn.call( self.options.el, history );
-			});
+			var cache = $.data(self.options.el[0],'chat_cache');
+		
+				
+			if (cache) {
+				fn.call( self.options.el, cache );
+			} else {
+				self.mlsjs.getChatHistory( options, function( history ){
+					$.data(self.options.el[0], 'chat_cache', history);
+					fn.call( self.options.el, history );
+				});				
+			}
 		};
+
 
 		/**
 		* Gets all the individual search fields available
@@ -397,7 +406,7 @@
 				account_id:this.options.account_id
 			};
 			
-			$.getJSON( this.url + '/chat-history/' + options.property_id +  '?callback=?', parameters, function( data ){
+			$.getJSON( this.url + '/chat-history/' + options.id +  '?callback=?', parameters, function( data ){
 				fn.call( null, data );
 			});			
 		};
