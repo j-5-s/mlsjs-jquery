@@ -17,29 +17,22 @@
 (function( $ ){
 	'use strict';
 
-	$.fn.MLSjs = function( options, method, args ) {
+	$.fn.MLSjs = function( options ) {
 		// Options object is being supplied
 
-		if (typeof options === 'object') {
-			options = $.extend( {
-				'el' : this,
-				'account_id': '1001',
-				'city': 'atlanta, ga'
-			}, options);
-			this.data('mlsjs',options);
-		} else {
-			args = method;
-			method = options;
-			options = this.data('mlsjs');
-			if (!options) {
-				$.error('MLSjs has not been initiated, please supply options');
-			}
-		}
+		
+		options = $.extend( {
+			'el' : this,
+			'account_id': '1001'
+		}, options);
+
+
+		this.data('mlsjs',options);
+	
 
 		var mlsjs =  new MLSjs( options );
-	
-		if (typeof method !== 'undefined')
-			mlsjs[method](args);
+		mlsjs[options.method](options.parameters);
+
 		return this;
 	};
 
@@ -71,29 +64,29 @@
 		* Gets the property data from the server
 		* or cached stored in $.data
 		* @function
-		* @param {Object} options
-		*     - id: {String} required
-		*     - success: {Function} required 
+		* @param {Object} parameters
+		*     - property_id: {String} required
+		*     - fn:          {Function} success
 		* @returns {Object} property
 		*/
-		this.fetchProperty = function( options ) {
-			var self = this,
-				id   = options.id,
-				fn   = options.success;
+		this.fetchProperty = function( parameters ) {
+			var self        = this,
+				property_id = parameters.property_id,
+				fn          = parameters.success;
 
 			//check that id is a hash
-			if (/\/(\w+)$/.test(id)) {
-				id = /\/(\w+)$/.exec(id)[1];
+			if (/\/(\w+)$/.test(property_id)) {
+				property_id = /\/(\w+)$/.exec(property_id)[1];
 			}
 
 			// Check if the property data is stored on the el
 			// if so, use it	
-			if (this.options.el.data('mls-property-'+id)) {
-				fn(this.options.el.data('mls-property-'+id));
+			if (this.options.el.data('mls-property-'+property_id)) {
+				fn(this.options.el.data('mls-property-'+property_id));
 			} else {	
-				this.mlsjs.fetchProperty( id, function( property ){
+				this.mlsjs.fetchProperty( property_id, function( property ){
 					
-					self.options.el.data('mls-property-'+id,property);				
+					self.options.el.data('mls-property-'+property_id,property);				
 					fn.call(self.options.el, property);
 				});
 			}
@@ -104,20 +97,21 @@
 		* Fetches the property from an id and 
 		* renders the template
 		* @function
-		* @param {String} id
-		* @param {Function} callback 
+		* @param {Object} parameters
+		*      - property_id: {String}
+		*      - fn:          {Function} callback 
 		* @returns {this} MLSjs
 		*/
 
-		this.fetchAndRenderProperty = function( options ) {
-			var self = this,
-				fn = options.success,
-				id;
+		this.fetchAndRenderProperty = function( parameters ) {
+			var self         = this,
+				fn           = parameters.success,
+				property_id;
 
-			if (typeof options === 'string') {
-				id = options;
+			if (typeof parameters === 'string') {
+				property_id = parameters;
 			} else {
-				id = options.id;
+				property_id = parameters.property_id;
 			}
 
 			//check that id is a hash
@@ -126,25 +120,24 @@
 			//@example
 			// #show/4e9795ebed5c8baf0200001e or
 			// #property/4e9795ebed5c8baf0200001e
-			if (/\/(\w+)$/.test(id)) {
-				id = /\/(\w+)$/.exec(id)[1];
+			if (/\/(\w+)$/.test( property_id )) {
+				property_id = /\/(\w+)$/.exec( property_id )[1];
 			}
 
 
 			this.fetchProperty( {
-				id: id,
+				property_id: property_id,
 				success: function( property ) {
-					var template = options.template || 'property';
+					var template = parameters.template || 'property',
+						dfd = $.Deferred();
+					//Generate the template
 					self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, {property:property} ) );	
-					var dfd = $.Deferred();
 				
 					fn.call(self.options.el, property, dfd );
 					self.mlsjs.loadSocket(function(socket){
-						socket.emit("load_property",{property_id:[id],action:'open'});	
+						socket.emit("load_property",{property_id:[property_id],action:'open'});	
 						dfd.resolve(socket);				
 					});
-					//socketio stuff
-					
 				}	
 			});
 			return this;
@@ -152,20 +145,20 @@
 
 		/**
 		* Gets a list of properties by id's
-		* @param {Object} options
-		*      - ids: {Array} property_ids
-		*      - success: {Function} callback
+		* @param {Object} parameters
+		*      - property_ids: {Array} property_ids
+		*      - success:      {Function} callback
 		*
 		* @function
 		* @returns {jQuery} this
 		*/
 
-		this.fetchProperties = function( options ) {
-			var self = this,
-				ids  = options.ids,
-				fn   = options.success;
+		this.fetchProperties = function( parameters ) {
+			var self          = this,
+				property_ids  = parameters.property_ids,
+				fn            = parameters.success;
 
-			this.mlsjs.fetchProperties( ids, function( properties ){
+			this.mlsjs.fetchProperties( property_ids, function( properties ){
 				if (typeof fn !== 'undefined')
 					fn.call( self.options.el, properties );
 			});
@@ -177,20 +170,24 @@
 		* Fetches the properties from an array of ids and 
 		* renders the template
 		* @function
-		* @param {Array} ids
+		* @param {object} parameters
+		*      - property_ids {Array}
+		*      - template     {jQuery}
+		*      - success      {Function}
 		* @returns {jQuery} this
 		*/
 
-		this.fetchAndRenderProperties = function( options ) {
-			var self = this,
-				ids  = options.ids,
-				fn   = options.success;
+		this.fetchAndRenderProperties = function( parameters ) {
+			var self          = this,
+				property_ids  = parameters.property_ids,
+				template      = parameters.tempalate || 'properties',
+				fn            = parameters.success;
 
 			this.fetchProperties( {
-				ids: ids,
+				property_ids: property_ids,
+				template: template,
 				success: function( properties ) {
 
-					var template = options.template || 'properties';
 					self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, {properties:properties} ) );
 				
 					if (typeof fn !== 'undefined')
@@ -203,12 +200,16 @@
 		/**
 		* Gets the chat history on a property for an id
 		* @function
-		* @param Option
+		* @param {Object} paramters
 		*     - property_id
+		*     - success
 		**/
-		this.getChatHistory = function( options ) {
-			var fn   = options.success,
-				self = this;
+		this.getChatHistory = function( parameters ) {
+			var fn          = parameters.success,
+				self        = this,
+				chat_params = {
+					property_id: parameters.property_id
+				};
 
 			var cache = $.data(self.options.el[0],'chat_cache');
 		
@@ -216,7 +217,7 @@
 			if (cache) {
 				fn.call( self.options.el, cache );
 			} else {
-				self.mlsjs.getChatHistory( options, function( history ){
+				self.mlsjs.getChatHistory( chat_params, function( history ){
 					$.data(self.options.el[0], 'chat_cache', history);
 					fn.call( self.options.el, history );
 				});				
@@ -235,11 +236,14 @@
 		* @returns {Array} search_fields
 		*/
 
-		this.getSearchFields = function( options ) {
-			var fn   = options.success,
-				self = this;
+		this.getSearchFields = function( parameters ) {
+			var fn   = parameters.success,
+				self = this,
+				search_parameters = {
+					location: parameters.location
+				};
 
-			this.mlsjs.getSearchFields( options, function( fields ){
+			this.mlsjs.getSearchFields( search_parameters, function( fields ){
 			
 				fn.call( self.options.el, fields );
 			});
@@ -250,23 +254,25 @@
 		/**
 		* Gets all the search fields and renders them in a form
 		* @function
-		* @param {Object} options
+		* @param {Object} parameters
 		*      - parameters
 		*      - success
 		* @returns {String} html
 		*/
 
-		this.renderSearchForm = function( options ) {
+		this.renderSearchForm = function( parameters ) {
 	
-			var fn   = options.success,
-				self = this;
+			var fn   = parameters.success,
+				self = this,
+				template = parameters.template || 'search_form',
+				template_parameters = {};
 
 
 
-			this.mlsjs.getSearchFields( options, function( fields ){
-				options.fields = fields;
-				var template = options.template || 'search_form';		
-				self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, options ) );
+			this.mlsjs.getSearchFields( parameters, function( fields ){
+				template_parameters.fields = fields;
+		
+				self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, template_parameters ) );
 			
 				if (fn)
 					fn.call( self.options.el, fields );
@@ -276,7 +282,7 @@
 
 		/**
 		* Gets a list of properties based on a query
-		* @param {Object} options
+		* @param {Object} paramters
 		*      - query: {Object} basic mongodb query parameter format
 		*      - success: {Function} callback(properties)
 		*
@@ -284,13 +290,12 @@
 		* @returns {jQuery} this
 		*/
 
-		this.queryProperties = function( options ) {
+		this.queryProperties = function( parameters ) {
 			var self        = this,
-				parameters  = options.query,
-				fn          = options.success;
+				fn          = parameters.success;
 
 
-			this.mlsjs.queryProperties( parameters, function( properties, parameters ){
+			this.mlsjs.queryProperties( parameters.query, function( properties, parameters ){
 				
 				fn.call( self.options.el, properties );
 			});
@@ -307,18 +312,18 @@
 		* @returns {jQuery} 
 		*/
 
-		this.queryAndRenderProperties = function( options ) {
+		this.queryAndRenderProperties = function( parameters ) {
 			var self            = this,
-				parameters      = options.query,
-				fn              = options.success,
-				template        = options.template || 'properties',
-				locals          = options.locals || {};
+		
+				fn              = parameters.success,
+				template        = parameters.template || 'properties',
+				locals          = parameters.locals || {};
 
 
 			locals.hash = locals.hash || 'show';
 			locals.property_page = locals.property_page || '/property';
 			
-			this.mlsjs.queryProperties( parameters, function( properties ) {
+			this.mlsjs.queryProperties( parameters.query, function( properties ) {
 					
 				self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, {properties:properties, locals:locals} ) );
 				
@@ -349,7 +354,7 @@
 		this.socketLoaded = false;
 	};
 
-	/** @lends PrivateMLSjs */
+	/** @lends MLSjsUtility */
 	(function(){
 
 		/**
@@ -403,10 +408,10 @@
 		*/
 		this.getChatHistory = function( options, fn ) {
 			var parameters = {
-				account_id:this.options.account_id
+				account_id: this.options.account_id
 			};
 			
-			$.getJSON( this.url + '/chat-history/' + options.id +  '?callback=?', parameters, function( data ){
+			$.getJSON( this.url + '/chat-history/' + options.property_id +  '?callback=?', parameters, function( data ){
 				fn.call( null, data );
 			});			
 		};
