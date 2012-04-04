@@ -10,6 +10,7 @@ Fetch all the attributes on a property by the property id
 * success (Function) a call back function that fires on success
 
 ```javascript
+
 $('body').MLSjs({
 	account_id:1001,
 	method: 'fetchProperty'
@@ -22,6 +23,7 @@ $('body').MLSjs({
 		}
 	}	
 });
+
 ```
 
 
@@ -48,6 +50,7 @@ $('body').MLSjs({
 		}
 	}
 });
+
 ```
 
 ####Optional Template
@@ -70,6 +73,7 @@ A method to fetch multiple properties by property id
 * success (Function) A callback function on success
 
 ```javascript
+
 $('body').MLSjs({
 	account_id:1001,
 	method: 'fetchProperties',
@@ -81,10 +85,10 @@ $('body').MLSjs({
 				$(this) //bound to the initial jQuery object ('body' in this case)
 				.append(property[i].address);
 			}
-
 		}
 	}
 });
+
 ```
 
 ### fetchAndRenderProperties( parameters )
@@ -98,6 +102,7 @@ option to bind the data to your own html.
 * success (Function) a callback function that fires on success
 
 ```javascript
+
 $('body').MLSjs({
 	account_id:1001,
 	method: 'fetchAndRenderProperties',
@@ -110,6 +115,7 @@ $('body').MLSjs({
 		}	
 	}
 });
+
 ```
 
 ####Optional Template
@@ -134,6 +140,7 @@ data necessary for the dropdowns such as cities, states, schools, etc.
 * success (Function) A callback function that fires on success
 
 ```javascript
+
 $('body').MLSjs({
 	account_id:1001,
 	method: 'getSearchFields',
@@ -145,6 +152,7 @@ $('body').MLSjs({
 		}
 	}
 });
+
 ```
 
 ### renderSearchForm( parameters )
@@ -158,6 +166,7 @@ Gets all the search fields and renders a search form
 * success (Function) A callback function that fires on success
 
 ```javascript
+
 $('body').MLSjs({
 	account_id:1001,
 	method: 'renderSearchForm',
@@ -170,9 +179,9 @@ $('body').MLSjs({
 		success: function(fields) {
 			//manually create your search form from the fields
 
-
 		}
 	}
+
 });
 ```
 
@@ -187,19 +196,19 @@ Gets a list of properties and their data from query parameters.
 * success (Function) A callback function that fires on success
 
 ```javascript
-	$("body").MLSjs({
-		account_id: '1001',
-		method: 'queryProperties'
-		parameters: {
-			query: {
-					limit:5,
-					image_type: 'horizontal'
-			},
-			success: function(properties) {
-				console.log(this,properties)
-			}
+$("body").MLSjs({
+	account_id: '1001',
+	method: 'queryProperties'
+	parameters: {
+		query: {
+				limit:5,
+				image_type: 'horizontal'
+		},
+		success: function(properties) {
+			console.log(this,properties)
 		}
-	});
+	}
+});
 ```
 
 
