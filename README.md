@@ -268,10 +268,10 @@ $("body").MLSjs({
 ```
 
 
-#TODO
-* create url helper function
-   properties_page + hash + id
-* gracefull fallback without hash   
+## TODO
+*create url helper function
+*properties_page + hash + id
+*gracefull fallback without hash   
 
 
 
