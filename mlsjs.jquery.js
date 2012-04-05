@@ -7,8 +7,12 @@
 //	$(document).ready(function(){
 //		$('body').MLSjs({
 //			account_id: '1001',
-//			template: $('#property_template')
-//		},'fetchAndRenderProperty','4e9ac8e1a454386c01000283');
+//			method: 'fetchAndRenderProperty',
+//			paramters: {
+//				property_id; '4e9ac8e1a454386c01000283'	
+//				template: $('#property_template')
+//			}
+//		});
 //	});
 //	Remove the property and data
 //	$('body').MLSjs('destroy');
@@ -31,7 +35,7 @@
 	
 
 		var mlsjs =  new MLSjs( options );
-		mlsjs[options.method](options.parameters);
+		mlsjs[options.method]( options.parameters );
 
 		return this;
 	};
@@ -228,7 +232,7 @@
 		/**
 		* Gets all the individual search fields available
 		* @function
-		* @param Options
+		* @param parameters
 		*     - location {Object}
 		*       - latitude
 		*       - longitude
@@ -244,7 +248,6 @@
 				};
 
 			this.mlsjs.getSearchFields( search_parameters, function( fields ){
-			
 				fn.call( self.options.el, fields );
 			});
 
@@ -262,12 +265,10 @@
 
 		this.renderSearchForm = function( parameters ) {
 	
-			var fn   = parameters.success,
-				self = this,
-				template = parameters.template || 'search_form',
+			var fn         			= parameters.success,
+				self 				= this,
+				template 			= parameters.template || 'search_form',
 				template_parameters = {};
-
-
 
 			this.mlsjs.getSearchFields( parameters, function( fields ){
 				template_parameters.fields = fields;
@@ -282,7 +283,7 @@
 
 		/**
 		* Gets a list of properties based on a query
-		* @param {Object} paramters
+		* @param {Object} parameters
 		*      - query: {Object} basic mongodb query parameter format
 		*      - success: {Function} callback(properties)
 		*
@@ -304,7 +305,7 @@
 		/**
 		* Query the properties and render them to the jQuery el
 		* @function
-		* @param {Object} options
+		* @param {Object} parameters
 		*      - query {Object}
 		*      - template {Mixed} 
 		*      - property_page {String}
@@ -314,7 +315,6 @@
 
 		this.queryAndRenderProperties = function( parameters ) {
 			var self            = this,
-		
 				fn              = parameters.success,
 				template        = parameters.template || 'properties',
 				locals          = parameters.locals || {};
