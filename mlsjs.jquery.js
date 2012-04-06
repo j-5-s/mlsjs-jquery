@@ -17,7 +17,8 @@
 //	Remove the property and data
 //	$('body').MLSjs('destroy');
 
-/*globals jQuery, io, document */
+
+/*globals jQuery, io, document, window */
 (function( $ ){
 	'use strict';
 
@@ -135,7 +136,7 @@
 					var template = parameters.template || 'property',
 						dfd = $.Deferred();
 					//Generate the template
-					self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, {property:property} ) );	
+					self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, { property:property} ) );	
 				
 					fn.call(self.options.el, property, dfd );
 					self.mlsjs.loadSocket(function(socket){
@@ -269,27 +270,36 @@
 
 		this.renderSearchForm = function( parameters ) {
 	
-			var fn         			= parameters.success,
+			var fn					= parameters.success,
 				search_results_page = parameters.search_results_page,
-				self 				= this,
-				template 			= parameters.template || 'search_form',
+				self				= this,
+				template			= parameters.template || 'search_form',
 				template_parameters = {};
 
 			this.mlsjs.getSearchFields( parameters, function( fields ){
 				template_parameters.fields = fields;
 				
-		
+
 				self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, template_parameters ) );
 			
-				$('form',self.mlsjs.options.el).bind( 'submit', function(e){
+				$( 'form', self.mlsjs.options.el ).bind( 'submit', function(e){
 					e.preventDefault();
 					var hash = $(this).serialize();
-					window.location = search_results_page + '#' + hash;
+					window.location = search_results_page + '#mls-search:' + hash;
 				});
 
 				if (fn)
 					fn.call( self.options.el, fields );
 			});
+		};
+
+		/**
+		* Compiles the search results from the hash and queries properties from it.
+		* Use this to render the results from submit of @renderSearchForm
+		* @function
+		*/
+		this.renderSearchResults = function() {
+
 		};
 
 
