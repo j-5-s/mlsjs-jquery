@@ -258,7 +258,11 @@
 		* Gets all the search fields and renders them in a form
 		* @function
 		* @param {Object} parameters
-		*      - parameters
+		*      - location
+		*			- latitude
+		*           - longitude
+		*			- radius
+		*		- search_results_page
 		*      - success
 		* @returns {String} html
 		*/
@@ -266,15 +270,23 @@
 		this.renderSearchForm = function( parameters ) {
 	
 			var fn         			= parameters.success,
+				search_results_page = parameters.search_results_page,
 				self 				= this,
 				template 			= parameters.template || 'search_form',
 				template_parameters = {};
 
 			this.mlsjs.getSearchFields( parameters, function( fields ){
 				template_parameters.fields = fields;
+				
 		
 				self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, template_parameters ) );
 			
+				$('form',self.mlsjs.options.el).bind( 'submit', function(e){
+					e.preventDefault();
+					var hash = $(this).serialize();
+					window.location = search_results_page + '#' + hash;
+				});
+
 				if (fn)
 					fn.call( self.options.el, fields );
 			});
