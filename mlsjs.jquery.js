@@ -345,6 +345,25 @@
 			locals.hash = locals.hash || 'show';
 			locals.property_page = locals.property_page || '/property';
 			
+			//If the query is a string, it should be the url hash
+			//from a search orm beginning with mls-search:
+			if ( typeof parameters.query === 'string' ) {
+				var query = /mls-search:(.*)/.exec( '' + parameters.query );
+				parameters.query = {};
+
+				if (query) {
+					query = query[1].split('&');
+					for (var i = 0; i < query.length; i ++) {
+						
+						var kv = query[i].split('='),
+							k = kv[0],
+							v = kv[1];
+						
+						parameters.query[k] = v;
+					}
+				}
+			}
+
 			this.mlsjs.queryProperties( parameters.query, function( properties ) {
 					
 				self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, {properties:properties, locals:locals} ) );
