@@ -293,15 +293,6 @@
 			});
 		};
 
-		/**
-		* Compiles the search results from the hash and queries properties from it.
-		* Use this to render the results from submit of @renderSearchForm
-		* @function
-		*/
-		this.renderSearchResults = function() {
-
-		};
-
 
 		/**
 		* Gets a list of properties based on a query
@@ -364,12 +355,12 @@
 				}
 			}
 
-			this.mlsjs.queryProperties( parameters.query, function( properties ) {
+			this.mlsjs.queryProperties( parameters.query, function( properties, fields ) {
 					
 				self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, {properties:properties, locals:locals} ) );
 				
 				if (typeof fn !== 'undefined')	
-					fn.call( self.options.el, properties );
+					fn.call( self.options.el, properties, fields );
 				
 			});	
 			return this;
@@ -502,10 +493,70 @@
 		* @function
 		*/
 		this.queryProperties = function ( params, fn ) {
-			var account_id = this.options.account_id;
+			var account_id = this.options.account_id,
+				fields     = {};
 			$.getJSON( this.url+'/query/'+account_id + '?callback=?', params ,function( data ){
-			
-				fn.call( null, data.properties );
+				
+				//populate the city object if it exists
+				if (params.city_id) {
+					var city = $(data.fields.cities).filter(function(k,v){
+						if (v._id === params.city_id) {
+							return true;
+						} else {
+							return false;
+						}
+					});
+					fields.city = city[0];
+				}
+
+				if (params.state_id) {
+					var state = $(data.fields.states).filter(function(k,v){
+						if (v._id === params.state_id) {
+							return true;
+						} else {
+							return false;
+						}
+					});
+					
+					fields.state = state[0];
+				}
+
+				if (params.elementary_school) {
+					var elementary_school = $(data.fields.elementary_school).filter(function(k,v){
+						if (v._id === params.elementary_school) {
+							return true;
+						} else {
+							return false;
+						}
+					});
+					
+					fields.elementary_school = elementary_school[0];
+				}				
+
+				if (params.middle_school) {
+					var middle_school = $(data.fields.middle_school).filter(function(k,v){
+						if (v._id === params.middle_school) {
+							return true;
+						} else {
+							return false;
+						}
+					});
+					
+					fields.middle_school = middle_school[0];
+				}	
+
+				if (params.high_school) {
+					var high_school = $(data.fields.high_school).filter(function(k,v){
+						if (v._id === params.high_school) {
+							return true;
+						} else {
+							return false;
+						}
+					});
+					
+					fields.high_school = high_school[0];
+				}					
+				fn.call( null, data.properties, fields );
 			});
 		};
 
