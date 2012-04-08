@@ -198,7 +198,7 @@ test('queryAndRenderProperties( options )',function(){
 				image_type: 'horizontal'
 			},
 			success: function(properties) {
-				start();
+				//start();
 				equal($(this).find('li').length,5, '5 list elements');
 				equal(properties.length, 5, '5 properties returned');
 			}			
@@ -215,7 +215,7 @@ test('queryAndRenderProperties( options )',function(){
 				state_id: '4ef7d59d241ebadf7626b600'
 			},
 			success: function(properties) {
-				start();
+				//start();
 				ok($(this).find('li').length > 2, '>2 list elements');
 				ok(properties.length >2 , ' >2 properties returned');
 			}			
@@ -230,8 +230,9 @@ test('queryAndRenderProperties( options )',function(){
 			query: '#mls-search:city_id=4e6964b589f894090c00001a&state_id=4ef7d59d241ebadf7626b600&maximum_price=&maximum_price=300000&beds=&baths=',
 			success: function(properties) {
 				start();
-				ok($(this).find('li').length > 2, '>2 list elements');
-				ok(properties.length >2 , ' >2 properties returned');
+
+				ok($(this).find('li').length > 2, '> 2 list elements');
+				ok(properties.length >2 , ' > 2 properties returned');
 			}			
 		}
 	});	

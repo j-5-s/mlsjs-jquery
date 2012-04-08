@@ -357,7 +357,7 @@
 
 			this.mlsjs.queryProperties( parameters.query, function( properties, fields ) {
 					
-				self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, {properties:properties, locals:locals} ) );
+				self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, {properties:properties, fields: fields, locals:locals} ) );
 				
 				if (typeof fn !== 'undefined')	
 					fn.call( self.options.el, properties, fields );
