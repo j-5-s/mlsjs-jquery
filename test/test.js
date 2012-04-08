@@ -27,13 +27,14 @@ test('fetchAndRenderProperty( options )',function(){
 		parameters: {
 			property_id: '4f6bc3c0da13d7e40100014e',
 			success: function(property, chat_socket ) {
-				start();
+			
 				equal(property._id, '4f6bc3c0da13d7e40100014e', 'Property id fetched is 4f6bc3c0da13d7e40100014e');
 				equal($($(this).children().get(0)).html(),'221 Robin Hood Rd NE','$(this) was rendered property data');
 
 				chat_socket.done(function(socket){
 					ok(typeof socket.socket !== 'undefined', 'Socket is defined');
 				});
+				start();
 			}			
 		}
 	});
@@ -229,10 +230,11 @@ test('queryAndRenderProperties( options )',function(){
 		parameters: {
 			query: '#mls-search:city_id=4e6964b589f894090c00001a&state_id=4ef7d59d241ebadf7626b600&maximum_price=&maximum_price=300000&beds=&baths=',
 			success: function(properties) {
-				start();
+		
 
 				ok($(this).find('li').length > 2, '> 2 list elements');
 				ok(properties.length >2 , ' > 2 properties returned');
+				start();
 			}			
 		}
 	});	
