@@ -160,9 +160,9 @@ Gets all the search fields and renders a search form
 
 ####Parameters
 * location (Object) localized parameters: 
-    ** latitude
-    ** longitude
-    ** radius (miles)
+    * latitude
+    * longitude
+    * radius (miles)
 
 * search_results_page (String) A url (relative) for the search form to send requests
   Important to note that the search will be sent to the search results page as a get
