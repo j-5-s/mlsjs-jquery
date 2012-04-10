@@ -166,7 +166,7 @@ Gets all the search fields and renders a search form
 * search_results_page (String) A url (relative) for the search form to send requests
   Important to note that the search will be sent to the search results page as a get
   request with the parameters store in the url hash - #mls-search:key=value&key2=value
-  your search_results_page should call [queryAndRenderProperties](queryAndRenderProperties) 
+  your search_results_page should call [queryAndRenderProperties](#queryAndRenderProperties) 
   on document ready and pass in the hash.
 * success (Function) A callback function that fires on success
 
