@@ -272,15 +272,21 @@
 	
 			var fn					= parameters.success,
 				search_results_page = parameters.search_results_page,
+				preloaded_fields    = this.mlsjs.buildQueryFromHash(parameters.preloaded_fields),
 				self				= this,
 				template			= parameters.template || 'search_form',
 				template_parameters = {};
 
 			this.mlsjs.getSearchFields( parameters, function( fields ){
-				template_parameters.fields = fields;
-				
+			
+			if (preloaded_fields) {
+				fields = self.mlsjs.preloadFields( fields, preloaded_fields );	
+			}
+			
+		
 
-				self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, template_parameters ) );
+			template_parameters.fields = fields;
+			self.mlsjs.options.el.html( self.mlsjs.getTemplate( template, template_parameters ) );
 			
 				$( 'form', self.mlsjs.options.el ).bind( 'submit', function(e){
 					e.preventDefault();
@@ -338,22 +344,9 @@
 			
 			//If the query is a string, it should be the url hash
 			//from a search orm beginning with mls-search:
-			if ( typeof parameters.query === 'string' ) {
-				var query = /mls-search:(.*)/.exec( '' + parameters.query );
-				parameters.query = {};
-
-				if (query) {
-					query = query[1].split('&');
-					for (var i = 0; i < query.length; i ++) {
-						
-						var kv = query[i].split('='),
-							k = kv[0],
-							v = kv[1];
-						
-						parameters.query[k] = v;
-					}
-				}
-			}
+			//if its not a string it will return the query object
+			parameters.query = this.mlsjs.buildQueryFromHash( parameters.query );
+			
 
 			this.mlsjs.queryProperties( parameters.query, function( properties, fields ) {
 					
@@ -388,6 +381,35 @@
 
 	/** @lends MLSjsUtility */
 	(function(){
+
+		/**
+		* Takes the query_hash like
+		* #mls-search:city_id=4e6964b589f894090c00001a&state_id=4ef7d59d241ebadf7626b600&maximum_price=&maximum_price=&beds=&baths=
+		* and builds a parameters object from it
+		* @function
+		* @returns {Object} parameters
+		*/
+		this.buildQueryFromHash = function( query_hash ){
+		if (typeof query_hash !== 'string')
+			return query_hash;
+
+			var query = /mls-search:(.*)/.exec( '' + query_hash),
+				parameters = {};
+
+			if (query) {
+				query = query[1].split('&');
+				for (var i = 0; i < query.length; i ++) {
+					
+					var kv = query[i].split('='),
+						k = kv[0],
+						v = kv[1];
+					
+					parameters[k] = v;
+				}
+			}
+
+			return parameters;
+		}
 
 		/**
 		* Fetch the property from the server
@@ -560,6 +582,40 @@
 			});
 		};
 
+		/**
+		* This function will preload fields from drop downs and radios
+		* @param {Object} fields The collection of all fields and all field
+		* values for each field
+		* @param {Object} preloaded_fields the id's of the fields to mark as selected
+		*/
+		this.preloadFields = function( fields, preloaded_fields) {
+
+			var id;
+			
+			for (var field in fields) {
+
+				switch (field) {
+					case 'cities':
+						id = preloaded_fields.city_id;
+						break;
+					case 'states':
+						id = preloaded_fields.state_id;
+						break;	
+				}
+
+				if (typeof fields[field] !== 'undefined') {
+					for (var i = 0; i < fields[field].length; i++ ) {
+
+						if (fields[field][i]._id === id) {
+							fields[field][i].selected = true;
+						}
+					}
+				}
+			}
+
+			return fields;
+					
+		}
 
 
 		/**
