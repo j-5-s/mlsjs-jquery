@@ -148,7 +148,8 @@ $('#chatbox').MLSjs({
 	parameters: {
 		property_id: p._id,
 		success: function(resp) {
-			renderHistory(resp.chat_history);
+			//update your chat box with resp.chat_history
+			console.log(resp.chat_history)
 		}
 	}
 });
