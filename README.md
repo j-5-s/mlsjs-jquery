@@ -163,6 +163,11 @@ Gets all the search fields and renders a search form
 ** latitude
 ** longitude
 ** radius (miles)
+* search_results_page (String) A url (relative) for the search form to send requests
+  Important to note that the search will be sent to the search results page as a get
+  request with the parameters store in the url hash - #mls-search:key=value&key2=value
+  your search_results_page should call [queryAndRenderProperties](queryAndRenderProperties) 
+  on document ready and pass in the hash.
 * success (Function) A callback function that fires on success
 
 ```javascript
@@ -175,7 +180,8 @@ $('body').MLSjs({
 			latitude: 33.73974000503961,
 			longitude: -84.35771976249998,
 			radius: 30
-		}
+		},
+		search_results_page: '',
 		success: function(fields) {
 			//manually create your search form from the fields
 
@@ -217,7 +223,7 @@ Calls the queryProperties function but also renders the properties to the page. 
 several options for a default template, or you may use your own template
 
 ####Parameters
-* query
+* query (paramters below or url hash (see [renderSearchForm](#renderSearchForm))
 ** limit (Number)
 ** image_type: ('horizontal','vertical','square') - return just properties with those image types
 ** private (true,false) - true will only search from your properties, false is the entire set
@@ -265,6 +271,23 @@ $("body").MLSjs({
 		}
 	}
 });
+
+//or use the hash
+$("body").MLSjs({
+	account_id: '1001',
+	method: 'queryAndRenderProperties',
+	parameters: {
+		query: window.location.hash,
+		template: 'properties',
+		locals: {
+			property_page: '/property'
+		},
+		success: function(properties) {
+			console.log(this)
+		}
+	}
+});
+
 ```
 
 

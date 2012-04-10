@@ -409,7 +409,7 @@
 			}
 
 			return parameters;
-		}
+		};
 
 		/**
 		* Fetch the property from the server
@@ -512,6 +512,7 @@
 		* Queries properties
 		* @param {Object} params (mongodb like query params)
 		* @param {Function} callback(properties) - Array
+		* @TODO refactor params
 		* @function
 		*/
 		this.queryProperties = function ( params, fn ) {
@@ -519,6 +520,12 @@
 				fields     = {};
 			$.getJSON( this.url+'/query/'+account_id + '?callback=?', params ,function( data ){
 				
+				//What i am doing here:
+				//I have certain field id's such as city_id,
+				//state_id and i want to get the full 
+				//state and city objects from those id's
+				//when i query the db. 
+
 				//populate the city object if it exists
 				if (params.city_id) {
 					var city = $(data.fields.cities).filter(function(k,v){
@@ -583,10 +590,13 @@
 		};
 
 		/**
-		* This function will preload fields from drop downs and radios
-		* @param {Object} fields The collection of all fields and all field
+		* This function will preload fields from drop downs and radios.
+		* This is a static method that is used to add a `selected` property
+		* to the `field` object in a collection of `fields`
+		* @param {Object} fields The collection of all fields and all values in that field
 		* values for each field
 		* @param {Object} preloaded_fields the id's of the fields to mark as selected
+		* @TODO currently only supports cities and states
 		*/
 		this.preloadFields = function( fields, preloaded_fields) {
 
@@ -613,9 +623,8 @@
 				}
 			}
 
-			return fields;
-					
-		}
+			return fields;			
+		};
 
 
 		/**
