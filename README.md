@@ -160,9 +160,11 @@ Gets all the search fields and renders a search form
 
 ####Parameters
 * location (Object) localized parameters:
+
 ** latitude
 ** longitude
 ** radius (miles)
+
 * search_results_page (String) A url (relative) for the search form to send requests
   Important to note that the search will be sent to the search results page as a get
   request with the parameters store in the url hash - #mls-search:key=value&key2=value
@@ -224,10 +226,12 @@ several options for a default template, or you may use your own template
 
 ####Parameters
 * query (paramters below or url hash (see [renderSearchForm](#renderSearchForm))
+
 ** limit (Number)
 ** image_type: ('horizontal','vertical','square') - return just properties with those image types
 ** private (true,false) - true will only search from your properties, false is the entire set
 ** more to come...
+
 * template: 'thumbnails' or 'properties' or 'search_results'. You may also use your own 
   [template](#template)  with a jQuery object 
 * property_page: (String) '/property', for example. It's the url that will load the property on your site
