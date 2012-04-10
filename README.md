@@ -196,10 +196,10 @@ $('body').MLSjs({
 Gets a list of properties and their data from query parameters.
 #### Parameters
 * query
-** limit (Number)
-** image_type: ('horizontal','vertical','square') - return just properties with those image types
-** private (true,false) - true will only search from your properties, false is the entire set
-** more to come...
+    * limit (Number)
+    * image_type: ('horizontal','vertical','square') - return just properties with those image types
+    * private (true,false) - true will only search from your properties, false is the entire set
+    * more to come...
 * success (Function) A callback function that fires on success
 
 ```javascript
@@ -225,12 +225,10 @@ several options for a default template, or you may use your own template
 
 ####Parameters
 * query (paramters below or url hash (see [renderSearchForm](#renderSearchForm))
-
-** limit (Number)
-** image_type: ('horizontal','vertical','square') - return just properties with those image types
-** private (true,false) - true will only search from your properties, false is the entire set
-** more to come...
-
+    * limit (Number)
+    * image_type: ('horizontal','vertical','square') - return just properties with those image types
+    * private (true,false) - true will only search from your properties, false is the entire set
+    * more to come...
 * template: 'thumbnails' or 'properties' or 'search_results'. You may also use your own 
   [template](#template)  with a jQuery object 
 * property_page: (String) '/property', for example. It's the url that will load the property on your site
