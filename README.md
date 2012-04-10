@@ -159,7 +159,7 @@ $('body').MLSjs({
 Gets all the search fields and renders a search form
 
 ####Parameters
-* location (Object) localized parameters:
+* location (Object) localized parameters: 
 ** latitude
 ** longitude
 ** radius (miles)
