@@ -203,13 +203,13 @@
 		};
 
 		/**
-		* Gets the chat history on a property for an id
+		* Fetches the chat history on a property for an id
 		* @function
-		* @param {Object} paramters
+		* @param {Object} parameters
 		*     - property_id
 		*     - success
 		**/
-		this.getChatHistory = function( parameters ) {
+		this.fetchChatHistory = function( parameters ) {
 			var fn          = parameters.success,
 				self        = this,
 				chat_params = {
@@ -222,7 +222,7 @@
 			if (cache) {
 				fn.call( self.options.el, cache );
 			} else {
-				self.mlsjs.getChatHistory( chat_params, function( history ){
+				self.mlsjs.fetchChatHistory( chat_params, function( history ){
 					$.data(self.options.el[0], 'chat_cache', history);
 					fn.call( self.options.el, history );
 				});				
@@ -314,6 +314,7 @@
 			var self        = this,
 				fn          = parameters.success;
 
+			parameters.query = this.mlsjs.buildQueryFromHash( parameters.query );	
 
 			this.mlsjs.queryProperties( parameters.query, function( properties, parameters ){
 				
@@ -460,7 +461,7 @@
 		* @function
 		* @api private
 		*/
-		this.getChatHistory = function( options, fn ) {
+		this.fetchChatHistory = function( options, fn ) {
 			var parameters = {
 				account_id: this.options.account_id
 			};

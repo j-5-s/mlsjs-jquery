@@ -132,6 +132,28 @@ If you do not provide a template, the default template for the method will be us
 A stylesheet has been provided to go with the default templates.
 
 
+###fetchChatHistory( parameters )
+Fetch an items chat history from the server.  The history
+is cached and will not call the server twice for the same property
+id
+
+####Parameters
+* property_id 
+* success 
+
+```javascript
+$('#chatbox').MLSjs({
+	account_id: '1001',
+	method: 'fetchChatHistory',
+	parameters: {
+		property_id: p._id,
+		success: function(resp) {
+			renderHistory(resp.chat_history);
+		}
+	}
+});
+```
+
 ### getSearchFields( parameters )
 It's likely you will need a property search form.  This methods will provide all the 
 data necessary for the dropdowns such as cities, states, schools, etc.
@@ -195,7 +217,7 @@ $('body').MLSjs({
 ### queryProperties( parameters )
 Gets a list of properties and their data from query parameters.
 #### Parameters
-* query
+* query (parameters below or hash from search query)
     * limit (Number)
     * image_type: ('horizontal','vertical','square') - return just properties with those image types
     * private (true,false) - true will only search from your properties, false is the entire set

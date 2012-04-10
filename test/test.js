@@ -99,12 +99,12 @@ test('getSearchFields( options )',function(){
 });
 
 
-test('getChatHistory( paramters )',function(){
+test('fetchChatHistory( paramters )',function(){
 	stop();
 	expect(1);
 	$("#hidden_div").MLSjs({
 		account_id: '1001',
-		method: 'getChatHistory',
+		method: 'fetchChatHistory',
 		parameters: {
 			property_id: '4e9ac8e1a454386c01000283',
 			success: function(resp) {		
