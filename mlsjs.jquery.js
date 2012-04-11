@@ -526,6 +526,10 @@
 				//state_id and i want to get the full 
 				//state and city objects from those id's
 				//when i query the db. 
+				if (params.beds)
+					fields.beds = params.beds;
+				if (params.baths)
+					fields.baths = params.baths;
 
 				//populate the city object if it exists
 				if (params.city_id) {
