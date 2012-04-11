@@ -606,7 +606,12 @@
 		this.preloadFields = function( fields, preloaded_fields) {
 
 			var id;
+			if (preloaded_fields.maximum_price)
+				fields.maximum_price = preloaded_fields.maximum_price;
 			
+			if (preloaded_fields.minimum_price)
+				fields.minimum_price = preloaded_fields.minimum_price;
+
 			for (var field in fields) {
 
 				switch (field) {
